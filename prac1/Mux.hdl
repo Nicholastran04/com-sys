@@ -14,5 +14,23 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    Nand(a=a, b=a, out=notA);  // notA = NOT(a)
+    Nand(a=b, b=b, out=notB);  // notB = NOT(b)
+    Nand(a=sel, b=sel, out=notSel);  // notSel = NOT(sel)
+
+    Nand(a=notA, b=b, out=term1A);
+    Nand(a=term1A, b=sel, out=term1);  // (a' b sel)
+
+    Nand(a=a, b=notB, out=term2A);
+    Nand(a=term2A, b=notSel, out=term2);  // (a b' sel')
+
+    Nand(a=a, b=b, out=term3A);
+    Nand(a=term3A, b=notSel, out=term3);  // (a b sel')
+
+    Nand(a=a, b=b, out=term4A);
+    Nand(a=term4A, b=sel, out=term4);  // (a b sel)
+
+    Nand(a=term1, b=term2, out=part1);
+    Nand(a=term3, b=term4, out=part2);
+    Nand(a=part1, b=part2, out=out);  // Final OR operation
 }
