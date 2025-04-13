@@ -25,7 +25,7 @@ CHIP Decode {
         j1,j2,j3;           // Jump wires
 
 PARTS:
-    Not(a=in[15], out=type);
+    Not(a=in[16], out=type);
     
     And(a=type, b=true, out=d1);  
     And(a=type, b=false, out=d2);   
