@@ -26,13 +26,14 @@ CHIP Decode {
 
 PARTS:
     // A-instruction or C-instruction
-    // FIXED: use in[15] directly
-    And(a=in[15], b=true, out=type);
+    Not(in=in[15], out=typeNot);
+    And(a=in[15], b=typeNot, out=type);
 
     // A-instruction
-    Not(in=type, out=typeNot);
-    And(a=typeNot, b=true, out=d1);
-
+    And(a=type, b=0, out=d2);
+    And(a=type, b=0, out=d3);
+    And(a=type, b=1, out=d1);
+    
     // C-instruction
     And(a=type, b=in[12], out=a);
     And(a=type, b=in[11], out=c1);
@@ -41,13 +42,13 @@ PARTS:
     And(a=type, b=in[8], out=c4);
     And(a=type, b=in[7], out=c5);
     And(a=type, b=in[6], out=c6);
-
+    
     // Destination control C-instruction
     And(a=type, b=in[5], out=d1);
     And(a=type, b=in[4], out=d2);
     And(a=type, b=in[3], out=d3);
-
-    // Jump control C-instruction
+    
+    // Jump control signals for C-instruction
     And(a=type, b=in[2], out=j1);
     And(a=type, b=in[1], out=j2);
     And(a=type, b=in[0], out=j3);
