@@ -37,7 +37,7 @@ PARTS:
     Not(in=zr, out=notZr);
     Not(in=ng, out=notNg);
     And(a=j3, b=notZr, out=greaterThanZero);
-    And(a=jumpIfGreaterThanZero, b=notNg, out=greaterThanZeroFinal);
+    And(a=greaterThanZero, b=notNg, out=greaterThanZeroFinal);
 
     // combine jump conditions
     Or(a=lessThanZero, b=equalZero, out=jumpCondition1);
