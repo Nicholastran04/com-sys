@@ -25,7 +25,6 @@ CHIP Decode {
         j1,j2,j3;           // Jump wires
 
 PARTS:
-    Or16Way(in=in, out=anySet);
     Mux16(a=false, b=true, sel=in[15], out=type);
 
     And(a=type, b=in[12], out=a);
@@ -43,4 +42,8 @@ PARTS:
     And(a=type, b=in[2], out=j1);
     And(a=type, b=in[1], out=j2);
     And(a=type, b=in[0], out=j3);
+
+    Not(in=type, out=notType);
+    And(a=notType, b=true, out=aOnly);
+    Or(a=d1, b=aOnly, out=d1);
 }
