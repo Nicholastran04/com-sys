@@ -5,8 +5,15 @@
 // Handle edge case: if length <= 1, mark as done
 @R2
 D=M
+@LENGTH_CHECK
+D;JEQ        // If length == 0, finish
+
+@R2
+D=M
+@ONE
+D=D-1
 @FINISH
-D;JLE       // If length <= 0 or 1, array is already sorted
+D;JEQ        // If length == 1, finish
 
 // Calculate end address
 @R1         // the address of arr[0]
