@@ -1,5 +1,5 @@
 // Test case 02 for AddSub.asm
-// Computes R1 + R2 - R3 = 1 + 2 - 5 = -2
+// Computes R1 + R2 - R3 = 1 + 2 - 3 = 0
 
 load AddSub.asm,
 output-file AddSub02.out,
@@ -10,11 +10,11 @@ set PC 0,
 set RAM[0] 0,  // Set R0
 set RAM[1] 1,  // Set R1
 set RAM[2] 2,  // Set R2
-set RAM[3] 5;  // Set R3
+set RAM[3] 3;  // Set R3
 repeat 100 {
   ticktock;
 }
 set RAM[1] 1,
 set RAM[2] 2,
-set RAM[3] 5,
+set RAM[3] 3,
 output;
