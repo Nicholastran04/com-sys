@@ -11,9 +11,9 @@ set RAM[0]  0,  // Set R0
 set RAM[1]  20,  // Set R1 (Array size)
 set RAM[2]  4,  // Set R2 (Array length)
 set RAM[20] 10, // Set Arr[0]
-set RAM[21] 20, // Set Arr[1]
-set RAM[22] 30, // Set Arr[2]
-set RAM[23] 40; // Set Arr[3]
+set RAM[21] 9, // Set Arr[1]
+set RAM[22] 8, // Set Arr[2]
+set RAM[23] 7; // Set Arr[3]
 repeat 300 {
   ticktock;    // Run for 300 clock cycles
 }
