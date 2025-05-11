@@ -28,13 +28,19 @@ D=A
 M=D         // i = 0
 
 (OUTER_LOOP)
-    // Check if outer loop is done
-    @i
-    D=M
-    @length
-    D=D-M
-    @DONE
-    D;JGE    // If i >= length, we're done
+@length
+D=M
+@1
+D=D-A
+@temp
+M=D        // temp = length - 1
+
+@i
+D=M
+@temp
+D=D-M
+@DONE
+D;JGT      // If i > length - 1 → done
     
     // Initialize min_idx = i
     @i
