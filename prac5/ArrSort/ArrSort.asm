@@ -2,10 +2,10 @@
 // Sets R0 to True (-1) when complete.
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
-// Handle edge case: if length <= 1, mark as done
+// Handle edge case: if length == 0 or 1, finish
 @R2
 D=M
-@LENGTH_CHECK
+@FINISH
 D;JEQ        // If length == 0, finish
 
 @R2
@@ -15,20 +15,20 @@ D=D-1
 @FINISH
 D;JEQ        // If length == 1, finish
 
-// Calculate end address
-@R1         // the address of arr[0]
+// Compute end address and store in R4 (do NOT overwrite R2)
+@R1
 D=M         // D = base address
-@R2         // the length
+@R2
 D=D+M       // D = base + length
 D=D-1       // D = address of last element
-@R2
-M=D         // R2 now points to the last element
+@R4
+M=D         // R4 = end address
 
 (OUTER_LOOP)
 (CHECK_TERMINATE)
     @R1
     D=M         // D = current start address
-    @R2
+    @R4
     D=D-M       // D = start - end
     @FINISH
     D;JGE       // If start >= end, we're done
@@ -42,7 +42,7 @@ M=D         // R2 now points to the last element
 (CHECK_INNER_END)
     @R3
     D=M         // D = current position
-    @R2
+    @R4
     D=D-M       // D = current - end
     @INNER_FINISH
     D;JGE       // If current >= end, inner loop is done
@@ -55,34 +55,36 @@ M=D         // R2 now points to the last element
     M=D         // Save current value
     
     @R3
-    A=M+1       // A = next address
+    A=M
+    A=A+1       // A = next address
     D=M         // D = next value
     @next
     M=D         // Save next value
     
     @current
-    D=M         // D = current value
+    D=M
     @next
     D=D-M       // D = current - next
     @SKIP
     D;JLE       // If current <= next, skip swap
     
-    // Swap values
+    // Swap current and next
     @current
-    D=M         // D = current value
+    D=M
     @temp
     M=D         // temp = current
     
     @next
-    D=M         // D = next value
+    D=M
     @R3
-    A=M         // A = current address
+    A=M
     M=D         // current = next
     
     @temp
-    D=M         // D = saved current value
+    D=M
     @R3
-    A=M+1       // A = next address 
+    A=M
+    A=A+1
     M=D         // next = temp
 
 (SKIP)
@@ -92,18 +94,17 @@ M=D         // R2 now points to the last element
     0;JMP
 
 (INNER_FINISH)
-    @R2
-    M=M-1       // Reduce the range by one (largest element is now at the end)
+    @R4
+    M=M-1       // Reduce end address by 1
     @OUTER_LOOP
     0;JMP
 
 (FINISH)
-    // Set R0 to True (-1) to indicate completion
     @1
-    D=-A        // D = -1 (True)
+    D=-A
     @R0
-    M=D         // R0 = True (-1)
+    M=D         // R0 = -1 (True)
 
 (END)
     @END
-    0;JMP       // Infinite loop to end program
+    0;JMP       // Infinite loop
