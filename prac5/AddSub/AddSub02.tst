@@ -16,5 +16,5 @@ repeat 100 {
 }
 set RAM[1] 5,
 set RAM[2] 9,
-set RAM[3] 2,
+set RAM[3] 3,
 output;
