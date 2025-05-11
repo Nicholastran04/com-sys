@@ -10,11 +10,11 @@ set PC 0,
 set RAM[0] 0,  // Set R0
 set RAM[1] 7,  // Set R1
 set RAM[2] 4,  // Set R2
-set RAM[3] 2;  // Set R3
+set RAM[3] -2;  // Set R3
 repeat 100 {
   ticktock;
 }
 set RAM[1] 7,
 set RAM[2] 4,
-set RAM[3] 2,
+set RAM[3] -2,
 output;
