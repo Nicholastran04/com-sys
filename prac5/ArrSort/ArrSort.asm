@@ -5,108 +5,98 @@
 // Handle edge case: if length <= 1, mark as done
 @R2
 D=M
-@DONE
-D;JLE    // If length <= 1, array is already sorted
+@FINISH
+D;JLE       // If length <= 0 or 1, array is already sorted
 
-// Initialize outer loop counter (R3 = R2 - 1)
+// Calculate end address
+@R1         // the address of arr[0]
+D=M         // D = base address
+@R2         // the length
+D=D+M       // D = base + length
+D=D-1       // D = address of last element
 @R2
-D=M
-D=D-1
-@R3
-M=D
+M=D         // R2 now points to the last element
 
 (OUTER_LOOP)
-    // Check if outer loop is done
-    @R3
+(CHECK_TERMINATE)
+    @R1
+    D=M         // D = current start address
+    @R2
+    D=D-M       // D = start - end
+    @FINISH
+    D;JGE       // If start >= end, we're done
+    
+    @R1
     D=M
-    @DONE
-    D;JLE    // If R3 <= 0, we're done
+    @R3         // use R3 as the index of the inner loop
+    M=D         // R3 = start address
 
-    // Initialize inner loop counter (R4 = 0)
-    @0
-    D=A
-    @R4
-    M=D
-
-    (INNER_LOOP)
-        // Check if inner loop is done
-        @R4
-        D=M
-        @R3
-        D=D-M
-        @OUTER_LOOP_END
-        D;JGE    // If R4 >= R3, inner loop is done
-
-        // Calculate address of current element (addr = R1 + R4)
-        @R1
-        D=M     // D = base address
-        @R4
-        D=D+M   // D = base address + offset
-        @addr
-        M=D     // addr = address of current element
-
-        // Load current element and next element
-        @addr
-        A=M     // A = address of current element
-        D=M     // D = current element value
-        @R5
-        M=D     // R5 = current element value
-
-        @addr
-        A=M+1   // A = address of next element
-        D=M     // D = next element value
-        @R6
-        M=D     // R6 = next element value
-
-        // Compare elements (if R5 > R6, swap)
-        @R5
-        D=M     // D = current element
-        @R6
-        D=D-M   // D = current - next
-        @SKIP_SWAP
-        D;JLE   // If current <= next, skip the swap
-
-        // Swap elements
-        @addr
-        A=M     // A = address of current element
-        D=M     // D = current element
-        @temp
-        M=D     // temp = current element
-
-        @addr
-        A=M+1   // A = address of next element
-        D=M     // D = next element
-        @addr
-        A=M     // A = address of current element
-        M=D     // current = next
-
-        @temp
-        D=M     // D = saved current value
-        @addr
-        A=M+1   // A = address of next element
-        M=D     // next = temp (original current)
-
-        (SKIP_SWAP)
-        // Increment inner loop counter
-        @R4
-        M=M+1   // R4++
-        @INNER_LOOP
-        0;JMP
-
-    (OUTER_LOOP_END)
-    // Decrement outer loop counter
+(INNER_LOOP)
+(CHECK_INNER_END)
     @R3
-    M=M-1   // R3--
+    D=M         // D = current position
+    @R2
+    D=D-M       // D = current - end
+    @INNER_FINISH
+    D;JGE       // If current >= end, inner loop is done
+    
+    // Compare current element with next element
+    @R3
+    A=M         // A = current address
+    D=M         // D = current value
+    @current
+    M=D         // Save current value
+    
+    @R3
+    A=M+1       // A = next address
+    D=M         // D = next value
+    @next
+    M=D         // Save next value
+    
+    @current
+    D=M         // D = current value
+    @next
+    D=D-M       // D = current - next
+    @SKIP
+    D;JLE       // If current <= next, skip swap
+    
+    // Swap values
+    @current
+    D=M         // D = current value
+    @temp
+    M=D         // temp = current
+    
+    @next
+    D=M         // D = next value
+    @R3
+    A=M         // A = current address
+    M=D         // current = next
+    
+    @temp
+    D=M         // D = saved current value
+    @R3
+    A=M+1       // A = next address 
+    M=D         // next = temp
+
+(SKIP)
+    @R3
+    M=M+1       // Move to next element
+    @INNER_LOOP
+    0;JMP
+
+(INNER_FINISH)
+    @R2
+    M=M-1       // Reduce the range by one (largest element is now at the end)
     @OUTER_LOOP
     0;JMP
 
-(DONE)
-// Set R0 to True (-1) to indicate completion
-@1
-D=-A    // D = -1 (True)
-@R0
-M=D     // R0 = True (-1)
+(FINISH)
+    // Set R0 to True (-1) to indicate completion
+    @1
+    D=-A        // D = -1 (True)
+    @R0
+    M=D         // R0 = True (-1)
 
 (END)
-@END
-0;JMP   // Infinite loop to end program
+    @END
+    0;JMP       // Infinite loop to end program
