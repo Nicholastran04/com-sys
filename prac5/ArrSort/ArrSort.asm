@@ -2,18 +2,19 @@
 // Sets R0 to True (-1) when complete.
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
-// Edge case
+// Edge case: length = 0
 @R2
 D=M
-@LENGTH_CHECK
+@FINISH
 D;JEQ
 
+// Edge case: length = 1
 @R2
 D=M
 @ONE
 D=D-1
 @FINISH
-D;JEQ
+D;JEQ 
 
 // End address
 @R1
