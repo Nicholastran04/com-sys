@@ -27,7 +27,7 @@ D;JEQ       // if counter == 0, end
 @MULTIPLICAND
 D=M         // D = multiplicand
 @R0
-M=M+D       // R0 += multiplicand
+M=D+M       // R0 += multiplicand
 
 @LOOP
 M=M-1       // counter--
