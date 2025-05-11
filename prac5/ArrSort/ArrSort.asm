@@ -14,11 +14,11 @@ D=M
 @DONE
 D;JLE       // If length <= 1, array is already sorted
 
-// Main sorting loop
-@0
+// Main sorting loop (i starts at 1)
+@1
 D=A
 @i
-M=D         // i = 0
+M=D         // i = 1
 
 (OUTER_LOOP)
     // Check if outer loop is done
@@ -29,124 +29,88 @@ M=D         // i = 0
     @DONE
     D;JGE    // If i >= length, we're done
     
-    // Initialize min_idx = i
+    // Get the key (current element)
+    @R1
+    D=M       // D = base address
     @i
-    D=M
-    @min_idx
-    M=D       // min_idx = i
+    D=D+M     // D = base + i
+    A=D       // A = &A[i]
+    D=M       // D = A[i]
+    @key
+    M=D       // key = A[i]
     
-    // Initialize j = i + 1
+    // Initialize j = i - 1
     @i
     D=M
+    D=D-1
     @j
-    M=D+1     // j = i + 1
+    M=D       // j = i - 1
     
     (INNER_LOOP)
-        // Check if inner loop is done
+        // Check if j < 0
         @j
         D=M
-        @length
-        D=D-M
-        @SWAP_PREP
-        D;JGE    // If j >= length, exit inner loop
+        @INSERT_POSITION
+        D;JLT    // If j < 0, we found insert position
         
-        // Compare A[j] with A[min_idx]
-        // Get address of A[j]
+        // Get A[j]
         @R1
         D=M       // D = base address
         @j
         D=D+M     // D = base + j
-        @j_addr
-        M=D       // j_addr = &A[j]
         A=D       // A = &A[j]
         D=M       // D = A[j]
         @j_val
         M=D       // j_val = A[j]
         
-        // Get address of A[min_idx]
-        @R1
-        D=M       // D = base address
-        @min_idx
-        D=D+M     // D = base + min_idx
-        @min_idx_addr
-        M=D       // min_idx_addr = &A[min_idx]
-        A=D       // A = &A[min_idx]
-        D=M       // D = A[min_idx]
-        @min_val
-        M=D       // min_val = A[min_idx]
-        
-        // Compare: if A[j] < A[min_idx], update min_idx
+        // Compare A[j] with key
         @j_val
         D=M       // D = A[j]
-        @min_val
-        D=D-M     // D = A[j] - A[min_idx]
-        @UPDATE_MIN
-        D;JLT     // If A[j] < A[min_idx], update min_idx
-        @INCREMENT_J
-        0;JMP     // Else, continue to next j
+        @key
+        D=D-M     // D = A[j] - key
+        @INSERT_POSITION
+        D;JLE     // If A[j] <= key, found position
         
-        (UPDATE_MIN)
-            @j
-            D=M
-            @min_idx
-            M=D    // min_idx = j
-            
-        (INCREMENT_J)
-            @j
-            M=M+1  // j++
-            @INNER_LOOP
-            0;JMP  // Continue inner loop
+        // Shift A[j] to A[j+1] position
+        @j_val
+        D=M       // D = A[j]
+        
+        @R1
+        A=M       // A = base address
+        @j
+        A=D+A     // A = base + j
+        A=A+1     // A = &A[j+1]
+        M=D       // A[j+1] = A[j] (shift)
+        
+        // Decrement j
+        @j
+        M=M-1     // j--
+        @INNER_LOOP
+        0;JMP     // Continue inner loop
     
-    (SWAP_PREP)
-        // Check if min_idx == i (no swap needed)
-        @i
+    (INSERT_POSITION)
+        // Insert key at A[j+1]
+        @j
         D=M
-        @min_idx
-        D=D-M
-        @INCREMENT_I
-        D;JEQ    // If min_idx == i, no need to swap
+        D=D+1     // D = j + 1
+        @insert_pos
+        M=D       // insert_pos = j + 1
         
-        // Swap A[i] and A[min_idx]
-        // Get address and value of A[i]
         @R1
         D=M       // D = base address
-        @i
-        D=D+M     // D = base + i
-        @i_addr
-        M=D       // i_addr = &A[i]
-        A=D       // A = &A[i]
-        D=M       // D = A[i]
-        @i_val
-        M=D       // i_val = A[i]
+        @insert_pos
+        D=D+M     // D = base + insert_pos
+        A=D       // A = &A[insert_pos]
         
-        // Get address and value of A[min_idx] (again to be safe)
+        @key
+        D=M       // D = key
         @R1
-        D=M       // D = base address
-        @min_idx
-        D=D+M     // D = base + min_idx
-        @min_idx_addr
-        M=D       // min_idx_addr = &A[min_idx]
-        A=D       // A = &A[min_idx]
-        D=M       // D = A[min_idx]
-        @min_val
-        M=D       // min_val = A[min_idx]
+        A=M       // A = base address
+        @insert_pos
+        A=D+A     // A = base + insert_pos
+        M=D       // A[insert_pos] = key
         
-        // Do the swap
-        // A[min_idx] = A[i]
-        @i_val
-        D=M       // D = A[i]
-        @min_idx_addr
-        A=M       // A = &A[min_idx]
-        M=D       // A[min_idx] = A[i]
-        
-        // A[i] = A[min_idx]
-        @min_val
-        D=M       // D = A[min_idx]
-        @i_addr
-        A=M       // A = &A[i]
-        M=D       // A[i] = A[min_idx]
-    
-    (INCREMENT_I)
+        // Increment i
         @i
         M=M+1     // i++
         @OUTER_LOOP
