@@ -12,7 +12,14 @@ M=D         // length = R2
 @length
 D=M
 @DONE
-D;JLE       // If length <= 1, array is already sorted
+D;JLE       // If length <= 0, array is already sorted
+@length
+D=M
+@ONE
+M=1
+D=D-M
+@DONE
+D;JEQ       // If length == 1, array is already sorted
 
 // Main sorting loop
 @0
