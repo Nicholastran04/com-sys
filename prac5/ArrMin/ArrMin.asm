@@ -1,7 +1,9 @@
+
 // Finds the smallest element in the array of length R2 whose first element is at RAM[R1] and stores the result in R0.
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // Initialize variables
+// Calculate end of array address: R2 = R1 + R2 - 1
 @R1
 D=M-1
 @R2
@@ -22,7 +24,7 @@ M=D
     D=D-M
     @END
     D;JGT
-
+    
     // Check if element is positive or negative
     @R1
     A=M
@@ -40,26 +42,44 @@ M=D
     @R0
     M=D
 
-    // Move to the next element
+    // Update R0 with the smallest value
 (SKIP)
     @R1
     M=M+1
     @LOOP
     0;JMP
 
-(END)
     // End program
+(END)
     @END
     0;JMP
 
 (R0_NEG)
-    // Handle case when R0 is negative
+    // If R0 is negative
+    @R1
+    A=M
+    D=M
+    @R0
+    D=D-M
+    @SKIP
+    D;JGE
+    @UPDATE
+    0;JMP
 
 (R0_POS)
-    // Handle case when R0 is positive
+    // If R0 is positive
+    @R1
+    A=M
+    D=M
+    @R0
+    D=D-M
+    @SKIP
+    D;JGE
+    @UPDATE
+    0;JMP
 
 (ELEM_NEG)
-    // Handle case when current element is negative
+    // If current element is negative
     @R0
     D=M
     @R0_NEG
@@ -68,7 +88,7 @@ M=D
     0;JMP
 
 (ELEM_POS)
-    // Handle case when current element is positive
+    // If current element is positive or zero
     @R0
     D=M
     @R0_POS
