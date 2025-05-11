@@ -11,21 +11,25 @@ M=0
 
 @R2
 D=M
+@COUNT
+M=D
+
+(LOOP)
+@COUNT
+D=M
 @END
 D;JEQ
 
-(LOOP)
 @R1
 D=M
 @R0
 M=M+D
 
-@R2
+@COUNT
 M=M-1
 @LOOP
-D=M
-D;JNE
+0;JMP
 
 (END)
 @END
-0;JMP 
+0;JMP
