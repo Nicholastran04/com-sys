@@ -12,5 +12,5 @@ D=D+M   // D = a + b
 @R3      // Load R3 (c)
 D=D-M   // D = a + b - c
 
-@0      // Store result in R0
+@R0      // Store result in R0
 M=D
