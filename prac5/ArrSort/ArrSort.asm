@@ -10,7 +10,6 @@ D;JEQ
 
 @R2
 D=M
-@ONE
 D=D-1
 @FINISH
 D;JEQ
