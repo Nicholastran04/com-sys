@@ -10,6 +10,7 @@ D;JEQ
 
 @R2
 D=M
+@ONE
 D=D-1
 @FINISH
 D;JEQ
@@ -20,7 +21,7 @@ D=M
 @R2
 D=D+M
 D=D-1
-@R2
+@R4
 M=D
 
 // Outer loop
@@ -28,7 +29,7 @@ M=D
 (CHECK_TERMINATE)
     @R1
     D=M
-    @R2
+    @R4
     D=D-M
     @FINISH
     D;JGE
@@ -38,13 +39,12 @@ M=D
     @R3
     M=D
 
-
 // Inner loop
 (INNER_LOOP)
 (CHECK_INNER_END)
     @R3
     D=M
-    @R2
+    @R4
     D=D-M
     @INNER_FINISH
     D;JGE
@@ -67,7 +67,7 @@ M=D
     D=D-M
     @SKIP
     D;JLE
-    
+
     // Swap values
     @current
     D=M
@@ -93,7 +93,7 @@ M=D
     0;JMP
 
 (INNER_FINISH)
-    @R2
+    @R4
     M=M-1
     @OUTER_LOOP
     0;JMP
