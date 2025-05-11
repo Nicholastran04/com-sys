@@ -2,90 +2,76 @@
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // Initialize variables
-// Calculate end of array address: R2 = R1 + R2 - 1
 @R1
-D=M-1       // D = start address - 1 (adjusted for loop structure)
+D=M-1
 @R2
-M=M+D       // R2 = R1 + R2 - 1 (now points to end address)
+M=M+D
 
 // Initialize R0 to maximum positive value as starting minimum
-@32767      // Max positive value in 16-bit signed integer
+@32767
 D=A
 @R0
-M=D         // Start with maximum value as minimum
+M=D
 
 (LOOP)
+    // Check termination condition
 (CHECK_TERMINATE)
     @R1
-    D=M        // D = current address
+    D=M
     @R2
-    D=D-M      // D = current - end
+    D=D-M
     @END
-    D;JGT      // If current > end, we've processed all elements
-    
-    @R1
-    A=M        // A = current address
-    D=M        // D = current element value
-    @ELEM_POS
-    D;JGE      // If element >= 0, jump to ELEM_POS
-    @ELEM_NEG
-    0;JMP      // Otherwise, jump to ELEM_NEG
+    D;JGT
 
-(UPDATE)
-    @R1
-    A=M        // A = current address
-    D=M        // D = current element value
-    @R0
-    M=D        // R0 = current element (new minimum)
-
-(SKIP)
-    @R1
-    M=M+1      // Move to next element
-    @LOOP
-    0;JMP      // Continue the loop
-
-(END)
-    @END
-    0;JMP      // Infinite loop to end program
-
-(R0_NEG)
-    // If R0 is negative and element is negative
+    // Check if element is positive or negative
     @R1
     A=M
-    D=M        // D = current element
-    @R0
-    D=D-M      // D = current - min
-    @SKIP
-    D;JGE      // If current >= min, skip
-    @UPDATE
-    0;JMP      // Otherwise, update minimum
+    D=M
+    @ELEM_POS
+    D;JGE
+    @ELEM_NEG
+    0;JMP
 
-(R0_POS)
-    // If R0 is positive and element is positive
+    // Update R0 with the smallest value
+(UPDATE)
     @R1
     A=M
     D=M
     @R0
-    D=D-M      // D = current - min
-    @SKIP
-    D;JGE      // If current >= min, skip
-    @UPDATE
-    0;JMP      // Otherwise, update minimum
+    M=D
+
+    // Move to the next element
+(SKIP)
+    @R1
+    M=M+1
+    @LOOP
+    0;JMP
+
+(END)
+    // End program
+    @END
+    0;JMP
+
+(R0_NEG)
+    // Handle case when R0 is negative
+
+(R0_POS)
+    // Handle case when R0 is positive
 
 (ELEM_NEG)
-    // If current element is negative
+    // Handle case when current element is negative
     @R0
     D=M
     @R0_NEG
-    D;JLT      // If R0 < 0, jump to R0_NEG
+    D;JLT
     @UPDATE
-    0;JMP      // If element is negative but R0 is positive, update
+    0;JMP
 
 (ELEM_POS)
-    // If current element is positive or zero
+    // Handle case when current element is positive
     @R0
     D=M
     @R0_POS
-    D;JGE      // If R0 >= 0, jump to R0_POS
+    D;JGE
     @SKIP
-    0;JMP      // If element is positive but R0 is negative, skip
+    0;JMP
