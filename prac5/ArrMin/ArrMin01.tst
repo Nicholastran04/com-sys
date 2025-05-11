@@ -18,6 +18,6 @@ repeat 300 {
   ticktock;    // Run for 300 clock cycles
 }
 
-set RAM[1] 4,  // Restore arguments in case program used them
+set RAM[1] 20,  // Restore arguments in case program used them
 set RAM[2] 4,
 output;        // Output to file
