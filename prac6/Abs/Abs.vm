@@ -1,9 +1,24 @@
-// Calculates y = |x|
+// Calculates y = |x| 
 // x & y are static variables
 
-// Put your code here.
+push static 0
 
+// Check if x < 0
+push constant 0
+lt
 
+if-goto NEGATIVE
+
+// POSITIVE case
+push static 0
+pop static 1
+goto END
+
+// NEGATIVE case
+label NEGATIVE
+push static 0
+neg
+pop static 1
 
 label END
 goto END
