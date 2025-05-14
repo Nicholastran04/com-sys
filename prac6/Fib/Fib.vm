@@ -3,6 +3,12 @@
 
 function Fib.fib 0
 
+// Handle case when n < 0: return 0
+push argument 0
+push constant 0
+lt
+if-goto NEG
+
 // Base cases
 // if n == 0, return 0
 push argument 0
@@ -35,6 +41,10 @@ call Fib.fib 1
 add
 return
 
+label NEG
+push constant 0
+return
+
 label BASE_CASE_0
 push constant 0
 return
@@ -42,5 +52,3 @@ return
 label BASE_CASE_1
 push constant 1
 return
-
-
