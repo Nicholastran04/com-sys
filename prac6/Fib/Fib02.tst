@@ -1,5 +1,5 @@
 // Test file for Fib02
-// n = -1
+// x = 0 when n = 0
 
 load,
 output-file Fib02.out,
@@ -15,8 +15,8 @@ set argument 400,  // base address of the argument segment
 set this 3000,     // base address of the this segment
 set that 3010,     // base address of the that segment
 
-set RAM[16] 0,  // static 0
-set RAM[17] -1,  // static 1
+set RAM[16] 0,  // static 0 (x)
+set RAM[17] 0,  // static 1 (n)
 set RAM[18] 0,  // static 2
 
 set local[0] 10,  // local 0
