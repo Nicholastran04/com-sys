@@ -2,9 +2,166 @@
 // a is a local variable
 // x & y are static variables
 
-// Put your code here.
+// x=0 or y=0
+push static 0
+push constant 0
+eq
+if-goto ZERO_RESULT
+push static 1
+push constant 0
+eq
+if-goto ZERO_RESULT
 
+// x=1 or y=1
+push static 0
+push constant 1
+eq
+if-goto X_IS_ONE
+push static 1
+push constant 1
+eq
+if-goto Y_IS_ONE
 
+// x=-1 or y=-1 
+push static 0
+push constant 1
+neg
+eq
+if-goto X_IS_NEG_ONE
+push static 1
+push constant 1
+neg
+eq
+if-goto Y_IS_NEG_ONE
+
+// positive or negative
+push static 0
+push constant 0
+lt
+push static 1
+push constant 0
+lt
+eq
+not
+pop temp 2
+
+// Absolute values of x and y
+push static 0
+push constant 0
+lt
+if-goto MAKE_X_POS
+push static 0
+pop temp 0
+goto CHECK_Y
+label MAKE_X_POS
+push static 0
+neg
+pop temp 0
+
+label CHECK_Y
+push static 1
+push constant 0
+lt
+if-goto MAKE_Y_POS
+push static 1
+pop temp 1
+goto START_MULT
+label MAKE_Y_POS
+push static 1
+neg
+pop temp 1
+
+// Loop through smaller value x or y
+label START_MULT
+push temp 0
+push temp 1
+lt
+if-goto X_SMALLER
+
+// Y is smaller, loop y times adding x
+push constant 0
+pop local 0
+push constant 0
+pop temp 3  // loop counter
+
+label Y_LOOP
+push temp 3
+push temp 1
+eq
+if-goto APPLY_SIGN
+
+push local 0
+push temp 0
+add
+pop local 0
+
+push temp 3
+push constant 1
+add
+pop temp 3
+goto Y_LOOP
+
+// X is smaller, loop x times adding y
+label X_SMALLER
+push constant 0
+pop local 0
+push constant 0
+pop temp 3  // loop counter
+
+label X_LOOP
+push temp 3
+push temp 0
+eq
+if-goto APPLY_SIGN
+
+push local 0
+push temp 1
+add
+pop local 0
+
+push temp 3
+push constant 1
+add
+pop temp 3
+goto X_LOOP
+
+// Special cases
+label ZERO_RESULT
+push constant 0
+pop local 0
+goto END
+
+label X_IS_ONE
+push static 1
+pop local 0
+goto END
+
+label Y_IS_ONE
+push static 0
+pop local 0
+goto END
+
+label X_IS_NEG_ONE
+push static 1
+neg
+pop local 0
+goto END
+
+label Y_IS_NEG_ONE
+push static 0
+neg
+pop local 0
+goto END
+
+// Apply sign
+label APPLY_SIGN
+push temp 2
+push constant 0
+eq
+if-goto END
+
+push local 0
+neg
+pop local 0
 
 label END
-goto END
