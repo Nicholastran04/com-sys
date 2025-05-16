@@ -2,52 +2,43 @@
 // a & b are both supplied as arguments
 
 function ArrMax.arrMax 2
-    // Local 0 will store the current max value
-    // Local 1 will be our loop counter (i)
-    // Argument 0 contains the pointer to the array
-    // Argument 1 contains the number of elements
     
     // Initialize loop counter (i = 0)
     push constant 0
     pop local 1
     
     // Initialize max with the first element
-    push argument 0   // Get pointer to array
-    pop pointer 1     // Set THAT to point to the array
-    push that 0       // Get first element (array[0])
-    pop local 0       // Store as initial max
+    push argument 0
+    pop pointer 1
+    push that 0
+    pop local 0
     
-    // Increment counter (i = 1) to start comparing from second element
     push constant 1
     pop local 1
     
-    // Loop through the array starting from the second element
 label LOOP
-    // Check if we've processed all elements (i < n)
-    push local 1      // Get counter
-    push argument 1   // Get number of elements
-    eq               // Check if counter == n
+    push local 1
+    push argument 1
+    eq
     if-goto END_LOOP
     
-    // Calculate address of array[i]
-    push argument 0   // Get base array address
-    push local 1      // Get current index i
-    add              // Calculate address of array[i]
-    pop pointer 1     // Set THAT to point to array[i]
+    push argument 0
+    push local 1
+    add
+    pop pointer 1
     
     // Compare current element with max
-    push that 0       // Get array[i]
-    push local 0      // Get current max
-    gt               // Check if array[i] > max
+    push that 0
+    push local 0
+    gt
     if-goto UPDATE_MAX
     goto CONTINUE_LOOP
     
 label UPDATE_MAX
-    push that 0       // Get array[i]
-    pop local 0       // Update max
+    push that 0
+    pop local 0
     
 label CONTINUE_LOOP
-    // Increment counter (i++)
     push local 1
     push constant 1
     add
@@ -55,6 +46,5 @@ label CONTINUE_LOOP
     goto LOOP
     
 label END_LOOP
-    // Return the max value
     push local 0
     return
