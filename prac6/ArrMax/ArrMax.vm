@@ -3,11 +3,11 @@
 
 function ArrMax.arrMax 2
     
-    // Initialize loop counter (i = 0)
+    // Loop counter
     push constant 0
     pop local 1
     
-    // Initialize max with the first element
+    // Max = first element
     push argument 0
     pop pointer 1
     push that 0
@@ -27,7 +27,7 @@ label LOOP
     add
     pop pointer 1
     
-    // Compare current element with max
+    // Compare
     push that 0
     push local 0
     gt
