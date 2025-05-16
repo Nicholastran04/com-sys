@@ -1,52 +1,60 @@
 // Contains a function ArrMax.arrMax that finds and returns the largest element in the array a of length b.
 // a & b are both supplied as arguments
 
-function ArrMax.arrMax 1
-    // Point start of array
-    push argument 0
-    pop pointer 1
-
-    // Initial max
-    push that 0
-    pop local 0
-
-    // Index counter
+function ArrMax.arrMax 2
+    // Local 0 will store the current max value
+    // Local 1 will be our loop counter (i)
+    // Argument 0 contains the pointer to the array
+    // Argument 1 contains the number of elements
+    
+    // Initialize loop counter (i = 0)
+    push constant 0
+    pop local 1
+    
+    // Initialize max with the first element
+    push argument 0   // Get pointer to array
+    pop pointer 1     // Set THAT to point to the array
+    push that 0       // Get first element (array[0])
+    pop local 0       // Store as initial max
+    
+    // Increment counter (i = 1) to start comparing from second element
     push constant 1
-
+    pop local 1
+    
+    // Loop through the array starting from the second element
 label LOOP
-    // Check if counter i equals n
-    push argument 1
-    eq
+    // Check if we've processed all elements (i < n)
+    push local 1      // Get counter
+    push argument 1   // Get number of elements
+    eq               // Check if counter == n
     if-goto END_LOOP
     
-    // Compare current array element with current max
-    push pointer 1
-    push constant 0
-    add
-    push constant 0
-    pop temp 0
+    // Calculate address of array[i]
+    push argument 0   // Get base array address
+    push local 1      // Get current index i
+    add              // Calculate address of array[i]
+    pop pointer 1     // Set THAT to point to array[i]
     
-    push that 0
-    push local 0
-    gt
+    // Compare current element with max
+    push that 0       // Get array[i]
+    push local 0      // Get current max
+    gt               // Check if array[i] > max
     if-goto UPDATE_MAX
-    goto SKIP_UPDATE
-
+    goto CONTINUE_LOOP
+    
 label UPDATE_MAX
-    push that 0
-    pop local 0
-
-label SKIP_UPDATE
+    push that 0       // Get array[i]
+    pop local 0       // Update max
+    
+label CONTINUE_LOOP
+    // Increment counter (i++)
+    push local 1
     push constant 1
     add
-    
-    push pointer 1
-    push constant 1
-    add
-    pop pointer 1
-    
+    pop local 1
     goto LOOP
-
+    
 label END_LOOP
+    // Return the max value
     push local 0
     return
