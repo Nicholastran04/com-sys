@@ -1,0 +1,4 @@
+function MyFunction 3
+push constant 7
+push constant 8
+push constant 9
