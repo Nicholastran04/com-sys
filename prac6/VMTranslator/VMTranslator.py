@@ -27,10 +27,10 @@ class VMTranslator:
             
         elif segment == 'local':
             assembly.extend([
+                f"@LCL",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@LCL",
-                "A=M+D",
+                "A=D+A",
                 "D=M",
                 "@SP",
                 "A=M",
@@ -41,10 +41,10 @@ class VMTranslator:
             
         elif segment == 'argument':
             assembly.extend([
+                f"@ARG",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@ARG",
-                "A=M+D",
+                "A=D+A",
                 "D=M",
                 "@SP",
                 "A=M",
@@ -55,10 +55,10 @@ class VMTranslator:
             
         elif segment == 'this':
             assembly.extend([
+                f"@THIS",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@THIS",
-                "A=M+D",
+                "A=D+A",
                 "D=M",
                 "@SP",
                 "A=M",
@@ -69,10 +69,10 @@ class VMTranslator:
             
         elif segment == 'that':
             assembly.extend([
+                f"@THAT",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@THAT",
-                "A=M+D",
+                "A=D+A",
                 "D=M",
                 "@SP",
                 "A=M",
@@ -146,10 +146,10 @@ class VMTranslator:
             
         elif segment == 'local':
             assembly.extend([
+                f"@LCL",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@LCL",
-                "D=M+D",
+                "D=D+A",
                 "@R13",
                 "M=D",
                 "@SP",
@@ -163,10 +163,10 @@ class VMTranslator:
             
         elif segment == 'argument':
             assembly.extend([
+                f"@ARG",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@ARG",
-                "D=M+D",
+                "D=D+A",
                 "@R13",
                 "M=D",
                 "@SP",
@@ -180,10 +180,10 @@ class VMTranslator:
             
         elif segment == 'this':
             assembly.extend([
+                f"@THIS",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@THIS",
-                "D=M+D",
+                "D=D+A",
                 "@R13",
                 "M=D",
                 "@SP",
@@ -197,10 +197,10 @@ class VMTranslator:
             
         elif segment == 'that':
             assembly.extend([
+                f"@THAT",
+                "D=M",
                 f"@{offset}",
-                "D=A",
-                "@THAT",
-                "D=M+D",
+                "D=D+A",
                 "@R13",
                 "M=D",
                 "@SP",
