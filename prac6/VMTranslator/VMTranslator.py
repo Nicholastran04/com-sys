@@ -435,17 +435,183 @@ M=M+1"""
             "D;JNE"
         )
 
+    @staticmethod
     def vm_function(function_name, n_vars):
         '''Generate Hack Assembly code for a VM function operation'''
-        return ""
+        n_vars = int(n_vars)
+        assembly = []
+        assembly.append(f"({function_name})")
+        for _ in range(n_vars):
+            assembly.extend([
+                "@0",
+                "D=A",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+        return '\n'.join(assembly)
 
+    @staticmethod
     def vm_call(function_name, n_args):
         '''Generate Hack Assembly code for a VM call operation'''
-        return ""
+        n_args = int(n_args)
+        VMTranslator.label_counter += 1
+        return_label = f"RET_ADDRESS_{VMTranslator.label_counter}"
+        assembly = []
 
+        assembly.extend([
+            f"@{return_label}",
+            "D=A",
+            "@SP",
+            "A=M",
+            "M=D",
+            "@SP",
+            "M=M+1"
+        ])
+
+        assembly.extend([
+            "@LCL",
+            "D=M",
+            "@SP",
+            "A=M",
+            "M=D",
+            "@SP",
+            "M=M+1"
+        ])
+
+        assembly.extend([
+            "@ARG",
+            "D=M",
+            "@SP",
+            "A=M",
+            "M=D",
+            "@SP",
+            "M=M+1"
+        ])
+
+        assembly.extend([
+            "@THIS",
+            "D=M",
+            "@SP",
+            "A=M",
+            "M=D",
+            "@SP",
+            "M=M+1"
+        ])
+
+        assembly.extend([
+            "@THAT",
+            "D=M",
+            "@SP",
+            "A=M",
+            "M=D",
+            "@SP",
+            "M=M+1"
+        ])
+
+        assembly.extend([
+            "@SP",
+            "D=M",
+            f"@{n_args + 5}",
+            "D=D-A",
+            "@ARG",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@SP",
+            "D=M",
+            "@LCL",
+            "M=D"
+        ])
+
+        assembly.extend([
+            f"@{function_name}",
+            "0;JMP"
+        ])
+
+        assembly.append(f"({return_label})")
+
+        return '\n'.join(assembly)
+
+    @staticmethod
     def vm_return():
         '''Generate Hack Assembly code for a VM return operation'''
-        return ""
+        assembly = []
+
+        assembly.extend([
+            "@LCL",
+            "D=M",
+            "@R13",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@5",
+            "A=D-A",
+            "D=M",
+            "@R14",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@SP",
+            "M=M-1",
+            "A=M",
+            "D=M",
+            "@ARG",
+            "A=M",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@ARG",
+            "D=M+1",
+            "@SP",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@R13",
+            "AM=M-1",
+            "D=M",
+            "@THAT",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@R13",
+            "AM=M-1",
+            "D=M",
+            "@THIS",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@R13",
+            "AM=M-1",
+            "D=M",
+            "@ARG",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@R13",
+            "AM=M-1",
+            "D=M",
+            "@LCL",
+            "M=D"
+        ])
+
+        assembly.extend([
+            "@R14",
+            "A=M",
+            "0;JMP"
+        ])
+
+        return '\n'.join(assembly)
 
 # A quick-and-dirty parser when run as a standalone script.
 if __name__ == "__main__":
