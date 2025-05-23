@@ -10,122 +10,58 @@ class VMTranslator:
 
     @staticmethod
     def vm_push(segment, offset):
-        '''Generate Hack Assembly code for a VM push operation'''
         assembly = []
         offset = int(offset)
-        
-        if segment == 'constant':
+
+        if segment == "constant":
             assembly.extend([
                 f"@{offset}",
                 "D=A",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
             ])
-            
-        elif segment == 'local':
+        elif segment in ("local", "argument", "this", "that"):
+            base = {
+                "local": "LCL",
+                "argument": "ARG",
+                "this": "THIS",
+                "that": "THAT"
+            }[segment]
             assembly.extend([
                 f"@{offset}",
                 "D=A",
-                "@LCL",
+                f"@{base}",
                 "A=M+D",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
+                "D=M"
             ])
-            
-        elif segment == 'argument':
+        elif segment == "temp":
+            if not 0 <= offset <= 7:
+                raise ValueError("Temp segment offset must be in range 0–7.")
             assembly.extend([
-                f"@{offset}",
-                "D=A",
-                "@ARG",
-                "A=M+D",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
+                f"@{5 + offset}",
+                "D=M"
             ])
-            
-        elif segment == 'this':
-            assembly.extend([
-                f"@{offset}",
-                "D=A",
-                "@THIS",
-                "A=M+D",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
-            ])
-            
-        elif segment == 'that':
-            assembly.extend([
-                f"@{offset}",
-                "D=A",
-                "@THAT",
-                "A=M+D",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
-            ])
-            
-        elif segment == 'static':
+        elif segment == "pointer":
+            if offset == 0:
+                assembly.extend(["@THIS", "D=M"])
+            elif offset == 1:
+                assembly.extend(["@THAT", "D=M"])
+            else:
+                raise ValueError("Pointer segment offset must be 0 (THIS) or 1 (THAT).")
+        elif segment == "static":
             var_name = f"{VMTranslator.filename}.{offset}" if VMTranslator.filename else f"static.{offset}"
             assembly.extend([
                 f"@{var_name}",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
-            ])
-            
-        elif segment == 'temp':
-            address = 5 + offset
-            if address > 12:
-                raise ValueError(f"Temp offset {offset} out of range (0-7)")
-            assembly.extend([
-                f"@{address}",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
-            ])
-            
-        elif segment == 'pointer':
-            if offset == 0:
-                ptr_name = "THIS"
-            elif offset == 1:
-                ptr_name = "THAT"
-            else:
-                raise ValueError(f"Pointer offset {offset} out of range (0-1)")
-            assembly.extend([
-                f"@{ptr_name}",
-                "D=M",
-                "@SP",
-                "A=M",
-                "M=D",
-                "@SP",
-                "M=M+1"
+                "D=M"
             ])
         else:
             raise ValueError(f"Unknown segment: {segment}")
-        
+
+        assembly.extend([
+            "@SP",
+            "A=M",
+            "M=D",
+            "@SP",
+            "M=M+1"
+        ])
         return '\n'.join(assembly)
 
     @staticmethod 
