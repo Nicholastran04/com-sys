@@ -213,7 +213,7 @@ class VMTranslator:
             ])
             
         elif segment == 'static':
-            var_name = f"{VMTranslator.filename}.{offset}" if VMTranslator.filename else f"static.{offset}"
+            var_name = f"{VMTranslator.filename}.{offset}"
             assembly.extend([
                 "@SP",
                 "M=M-1",
@@ -224,9 +224,9 @@ class VMTranslator:
             ])
             
         elif segment == 'temp':
-            address = 5 + offset
-            if address > 12:
+            if offset < 0 or offset > 7:
                 raise ValueError(f"Temp offset {offset} out of range (0-7)")
+            address = 5 + offset
             assembly.extend([
                 "@SP",
                 "M=M-1",
@@ -238,19 +238,25 @@ class VMTranslator:
             
         elif segment == 'pointer':
             if offset == 0:
-                ptr_name = "THIS"
+                assembly.extend([
+                    "@SP",
+                    "M=M-1",
+                    "A=M",
+                    "D=M",
+                    "@THIS",
+                    "M=D"
+                ])
             elif offset == 1:
-                ptr_name = "THAT"
+                assembly.extend([
+                    "@SP",
+                    "M=M-1",
+                    "A=M",
+                    "D=M",
+                    "@THAT",
+                    "M=D"
+                ])
             else:
                 raise ValueError(f"Pointer offset {offset} out of range (0-1)")
-            assembly.extend([
-                "@SP",
-                "M=M-1",
-                "A=M",
-                "D=M",
-                f"@{ptr_name}",
-                "M=D"
-            ])
         else:
             raise ValueError(f"Unknown segment: {segment}")
         
