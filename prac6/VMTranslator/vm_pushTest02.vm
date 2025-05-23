@@ -1,0 +1,9 @@
+// PUSHTest02.vm
+// Test pushing from different segments
+push local 0
+push argument 1
+push this 2
+push that 3
+push temp 2
+push pointer 0
+push static 0
