@@ -1,5 +1,7 @@
 class VMTranslator:
     filename = ""
+    label_counter = 0
+
     
     @staticmethod
     def set_filename(name):
@@ -285,13 +287,61 @@ M=-M
 @SP
 M=M+1"""
 
+    @staticmethod
     def vm_eq():
         '''Generate Hack Assembly code for a VM eq operation'''
-        return ""
+        VMTranslator.label_counter += 1
+        label_id = VMTranslator.label_counter
+        return f"""@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+D=M-D
+@EQ_TRUE{label_id}
+D;JEQ
+@SP
+A=M
+M=0
+@EQ_END{label_id}
+0;JMP
+(EQ_TRUE{label_id})
+@SP
+A=M
+M=-1
+(EQ_END{label_id})
+@SP
+M=M+1"""
 
+    @staticmethod
     def vm_gt():
         '''Generate Hack Assembly code for a VM gt operation'''
-        return ""
+        VMTranslator.label_counter += 1
+        label_id = VMTranslator.label_counter
+        return f"""@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+D=M-D
+@GT_TRUE{label_id}
+D;JGT
+@SP
+A=M
+M=0
+@GT_END{label_id}
+0;JMP
+(GT_TRUE{label_id})
+@SP
+A=M
+M=-1
+(GT_END{label_id})
+@SP
+M=M+1"""
 
     def vm_lt():
         '''Generate Hack Assembly code for a VM lt operation'''
