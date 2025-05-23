@@ -410,17 +410,30 @@ M=!M
 @SP
 M=M+1"""
 
+    @staticmethod
     def vm_label(label):
         '''Generate Hack Assembly code for a VM label operation'''
-        return ""
+        scoped_label = f"{VMTranslator.filename}${label}" if VMTranslator.filename else label
+        return f"({scoped_label})"
 
+    @staticmethod
     def vm_goto(label):
         '''Generate Hack Assembly code for a VM goto operation'''
-        return ""
+        scoped_label = f"{VMTranslator.filename}${label}" if VMTranslator.filename else label
+        return f"@{scoped_label}\n0;JMP"
 
+    @staticmethod
     def vm_if(label):
         '''Generate Hack Assembly code for a VM if-goto operation'''
-        return ""
+        scoped_label = f"{VMTranslator.filename}${label}" if VMTranslator.filename else label
+        return (
+            "@SP\n"
+            "M=M-1\n"
+            "A=M\n"
+            "D=M\n"
+            f"@{scoped_label}\n"
+            "D;JNE"
+        )
 
     def vm_function(function_name, n_vars):
         '''Generate Hack Assembly code for a VM function operation'''
