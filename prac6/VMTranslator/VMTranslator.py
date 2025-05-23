@@ -374,6 +374,7 @@ M=M+1"""
 
     @staticmethod
     def vm_and():
+        '''Generate Hack Assembly code for a VM or operation'''
         return """@SP
 M=M-1
 A=M
@@ -385,13 +386,29 @@ M=M&D
 @SP
 M=M+1"""
 
+    @staticmethod
     def vm_or():
         '''Generate Hack Assembly code for a VM or operation'''
-        return ""
+        return """@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M|D
+@SP
+M=M+1"""
 
+    @staticmethod
     def vm_not():
         '''Generate Hack Assembly code for a VM not operation'''
-        return ""
+        return """@SP
+M=M-1
+A=M
+M=!M
+@SP
+M=M+1"""
 
     def vm_label(label):
         '''Generate Hack Assembly code for a VM label operation'''
