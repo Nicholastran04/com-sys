@@ -343,13 +343,47 @@ M=-1
 @SP
 M=M+1"""
 
+    @staticmethod
     def vm_lt():
         '''Generate Hack Assembly code for a VM lt operation'''
-        return ""
+        label_true = f"LT_TRUE_{VMTranslator.label_counter}"
+        label_end = f"LT_END_{VMTranslator.label_counter}"
+        VMTranslator.label_counter += 1
+        return f"""@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+D=M-D
+@{label_true}
+D;JLT
+@SP
+A=M
+M=0
+@{label_end}
+0;JMP
+({label_true})
+@SP
+A=M
+M=-1
+({label_end})
+@SP
+M=M+1"""
 
+    @staticmethod
     def vm_and():
-        '''Generate Hack Assembly code for a VM and operation'''
-        return ""
+        return """@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M&D
+@SP
+M=M+1"""
 
     def vm_or():
         '''Generate Hack Assembly code for a VM or operation'''
