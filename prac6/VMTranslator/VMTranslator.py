@@ -1,113 +1,265 @@
 class VMTranslator:
+    filename = ""
+    
+    @staticmethod
+    def set_filename(name):
+        """Set the filename for static variable naming"""
+        VMTranslator.filename = name
 
     @staticmethod
     def vm_push(segment, offset):
-        if segment == "constant":
-            return f"""@{offset}
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1"""
-
-        elif segment in ["local", "argument", "this", "that"]:
-            base = {
-                "local": "LCL",
-                "argument": "ARG",
-                "this": "THIS",
-                "that": "THAT"
-            }[segment]
-            return f"""@{offset}
-D=A
-@{base}
-A=M+D
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1"""
-
-        elif segment == "temp":
-            return f"""@{5 + offset}
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1"""
-
-        elif segment == "pointer":
-            return f"""@{'THIS' if offset == 0 else 'THAT'}
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1"""
-
-        elif segment == "static":
-            return f"""@Static.{offset}
-D=M
-@SP
-A=M
-M=D
-@SP
-M=M+1"""
-
+        '''Generate Hack Assembly code for a VM push operation'''
+        assembly = []
+        offset = int(offset)
+        
+        if segment == 'constant':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'local':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@LCL",
+                "A=M+D",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'argument':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@ARG",
+                "A=M+D",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'this':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@THIS",
+                "A=M+D",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'that':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@THAT",
+                "A=M+D",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'static':
+            var_name = f"{VMTranslator.filename}.{offset}" if VMTranslator.filename else f"static.{offset}"
+            assembly.extend([
+                f"@{var_name}",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'temp':
+            address = 5 + offset
+            if address > 12:
+                raise ValueError(f"Temp offset {offset} out of range (0-7)")
+            assembly.extend([
+                f"@{address}",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
+            
+        elif segment == 'pointer':
+            if offset == 0:
+                ptr_name = "THIS"
+            elif offset == 1:
+                ptr_name = "THAT"
+            else:
+                raise ValueError(f"Pointer offset {offset} out of range (0-1)")
+            assembly.extend([
+                f"@{ptr_name}",
+                "D=M",
+                "@SP",
+                "A=M",
+                "M=D",
+                "@SP",
+                "M=M+1"
+            ])
         else:
-            return "// Unsupported segment for push"
+            raise ValueError(f"Unknown segment: {segment}")
+        
+        return '\n'.join(assembly)
+
+    @staticmethod 
+    def vm_pop(segment, offset):
+        '''Generate Hack Assembly code for a VM pop operation'''
+        assembly = []
+        offset = int(offset)
+        
+        if segment == 'constant':
+            raise ValueError("Cannot pop to constant segment")
+            
+        elif segment == 'local':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@LCL",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
+            
+        elif segment == 'argument':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@ARG",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
+            
+        elif segment == 'this':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@THIS",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
+            
+        elif segment == 'that':
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@THAT",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
+            
+        elif segment == 'static':
+            var_name = f"{VMTranslator.filename}.{offset}" if VMTranslator.filename else f"static.{offset}"
+            assembly.extend([
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                f"@{var_name}",
+                "M=D"
+            ])
+            
+        elif segment == 'temp':
+            address = 5 + offset
+            if address > 12:
+                raise ValueError(f"Temp offset {offset} out of range (0-7)")
+            assembly.extend([
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                f"@{address}",
+                "M=D"
+            ])
+            
+        elif segment == 'pointer':
+            if offset == 0:
+                ptr_name = "THIS"
+            elif offset == 1:
+                ptr_name = "THAT"
+            else:
+                raise ValueError(f"Pointer offset {offset} out of range (0-1)")
+            assembly.extend([
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                f"@{ptr_name}",
+                "M=D"
+            ])
+        else:
+            raise ValueError(f"Unknown segment: {segment}")
+        
+        return '\n'.join(assembly)
 
     @staticmethod
-    def vm_pop(segment, offset):
-        if segment in ["local", "argument", "this", "that"]:
-            base = {
-                "local": "LCL",
-                "argument": "ARG",
-                "this": "THIS",
-                "that": "THAT"
-            }[segment]
-            return f"""@{offset}
-D=A
-@{base}
-D=M+D
-@R13
-M=D
-@SP
-AM=M-1
-D=M
-@R13
-A=M
-M=D"""
-
-        elif segment == "temp":
-            return f"""@SP
-AM=M-1
-D=M
-@{5 + offset}
-M=D"""
-
-        elif segment == "pointer":
-            return f"""@SP
-AM=M-1
-D=M
-@{'THIS' if offset == 0 else 'THAT'}
-M=D"""
-
-        elif segment == "static":
-            return f"""@SP
-AM=M-1
-D=M
-@Static.{offset}
-M=D"""
-
-        else:
-            return "// Unsupported segment for pop"
-
     def vm_add():
         '''Generate Hack Assembly code for a VM add operation'''
-        return ""
+        return """@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M+D
+@SP
+M=M+1"""
 
     def vm_sub():
         '''Generate Hack Assembly code for a VM sub operation'''
