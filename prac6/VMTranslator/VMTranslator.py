@@ -261,13 +261,29 @@ M=M+D
 @SP
 M=M+1"""
 
+    @staticmethod
     def vm_sub():
         '''Generate Hack Assembly code for a VM sub operation'''
-        return ""
+        return """@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M-D
+@SP
+M=M+1"""
 
+    @staticmethod
     def vm_neg():
         '''Generate Hack Assembly code for a VM neg operation'''
-        return ""
+        return """@SP
+M=M-1
+A=M
+M=-M
+@SP
+M=M+1"""
 
     def vm_eq():
         '''Generate Hack Assembly code for a VM eq operation'''
@@ -361,5 +377,3 @@ if __name__ == "__main__":
                         print(VMTranslator.vm_function(tokens[1],int(tokens[2])))
                     elif(tokens[0]=='call'):
                         print(VMTranslator.vm_call(tokens[1],int(tokens[2])))
-
-        
