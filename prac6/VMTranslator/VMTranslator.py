@@ -193,116 +193,72 @@ class VMTranslator:
             raise ValueError("Cannot pop to constant segment")
             
         elif segment == 'local':
-            if offset == 0:
-                assembly.extend([
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@LCL",
-                    "A=M",
-                    "M=D"
-                ])
-            else:
-                assembly.extend([
-                    f"@{offset}",
-                    "D=A",
-                    "@LCL",
-                    "D=M+D",
-                    "@R13",
-                    "M=D",
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@R13",
-                    "A=M",
-                    "M=D"
-                ])
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@LCL",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
             
         elif segment == 'argument':
-            if offset == 0:
-                assembly.extend([
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@ARG",
-                    "A=M",
-                    "M=D"
-                ])
-            else:
-                assembly.extend([
-                    f"@{offset}",
-                    "D=A",
-                    "@ARG",
-                    "D=M+D",
-                    "@R13",
-                    "M=D",
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@R13",
-                    "A=M",
-                    "M=D"
-                ])
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@ARG",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
             
         elif segment == 'this':
-            if offset == 0:
-                assembly.extend([
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@THIS",
-                    "A=M",
-                    "M=D"
-                ])
-            else:
-                assembly.extend([
-                    f"@{offset}",
-                    "D=A",
-                    "@THIS",
-                    "D=M+D",
-                    "@R13",
-                    "M=D",
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@R13",
-                    "A=M",
-                    "M=D"
-                ])
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@THIS",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
             
         elif segment == 'that':
-            if offset == 0:
-                assembly.extend([
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@THAT",
-                    "A=M",
-                    "M=D"
-                ])
-            else:
-                assembly.extend([
-                    f"@{offset}",
-                    "D=A",
-                    "@THAT",
-                    "D=M+D",
-                    "@R13",
-                    "M=D",
-                    "@SP",
-                    "M=M-1",
-                    "A=M",
-                    "D=M",
-                    "@R13",
-                    "A=M",
-                    "M=D"
-                ])
+            assembly.extend([
+                f"@{offset}",
+                "D=A",
+                "@THAT",
+                "D=M+D",
+                "@R13",
+                "M=D",
+                "@SP",
+                "M=M-1",
+                "A=M",
+                "D=M",
+                "@R13",
+                "A=M",
+                "M=D"
+            ])
             
         elif segment == 'static':
             var_name = f"{VMTranslator.filename}.{offset}"
